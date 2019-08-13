@@ -15,3 +15,8 @@ Pure Turing State Machine running in Terminal, done with Scala using Cats (havin
  sbt "run </path/to/description.json> <input>"
  ```
 ![example](https://i.ibb.co/VJn6sQh/Capture-d-e-cran-2019-08-13-a-19-01-45.png)
+
+### TODO
+ - using State Monad ?
+ - adding some safety (if needed)
+ - refactoring

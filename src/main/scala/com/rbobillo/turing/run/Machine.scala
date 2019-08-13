@@ -25,7 +25,7 @@ object Machine {
     s"($ms, ${"".padTo(mx - ms.value.length, " ").mkString}${Character(read)}) -> ${ss.head}"
   }
 
-  //@tailrec
+  // TODO: adding tailrec safety ? -> input: 111-1111= causes StackOverFlowError
   private def readAndUpdateInput(cursor: Cursor[String], inputSize: Int, ms: MachineState, ds: Description): IO[ExitCode] =
     cursor match {
       case Cursor(_, _, _) if ds.finals.states.contains(ms) => IO.pure(ExitCode.Success)
