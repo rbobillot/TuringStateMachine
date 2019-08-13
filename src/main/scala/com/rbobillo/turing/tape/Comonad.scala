@@ -1,4 +1,4 @@
-package com.rbobillo.turing.zipper
+package com.rbobillo.turing.tape
 
 import scala.language.higherKinds
 

@@ -1,11 +1,11 @@
 package com.rbobillo.turing.run
 
 import cats.effect.{ExitCode, IO}
-import com.rbobillo.turing.description.{Character, Description, MachineState, Step, Transition}
-import com.rbobillo.turing.zipper.Cursor
-import com.rbobillo.turing.zipper.CursorImplicits.CharZipper
+import cats.syntax.all._
 
-import scala.annotation.tailrec
+import com.rbobillo.turing.description.{Character, Description, MachineState, Step, Transition}
+import com.rbobillo.turing.tape.Cursor
+import com.rbobillo.turing.tape.CursorImplicits.CharZipper
 
 object Machine {
 

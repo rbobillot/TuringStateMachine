@@ -1,4 +1,4 @@
-package com.rbobillo.turing.zipper
+package com.rbobillo.turing.tape
 
 object LazyListZipper extends Comonad[Cursor] {
 

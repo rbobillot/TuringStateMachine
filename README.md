@@ -3,7 +3,7 @@
 Turing State Machine
 =
 
-Pure Turing State Machine running in Terminal, done with Scala using Cats (having fun with the IO Monad, Validated Applicative)
+Pure Deterministic Turing State Machine, running in Terminal, done with Scala using Cats (having fun with the IO Monad, Validated Applicative)
 
 ### What does it do ?
  - parses a JSON description of the Machine (alphabet, states, transitions...)

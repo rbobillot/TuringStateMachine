@@ -1,0 +1,43 @@
+{
+  "name"    : "palindrome",
+  "alphabet": [ ".", "0", "1", "y", "n"],
+  "blank"   : ".",
+  "states"  : [ "scanright", "skipleft", "scan0", "scan1", "check0", "check1", "end", "HALT" ],
+  "initial" : "scanright",
+  "finals"  : [ "HALT" ],
+  "transitions" : {
+    "scanright": [
+      { "read" : ".", "to_state": "scanright", "write": ".", "action": "RIGHT"},
+      { "read" : "0", "to_state": "scan0", "write": ".", "action": "RIGHT"},
+      { "read" : "1", "to_state": "scan1", "write": ".", "action": "RIGHT"}
+    ],
+    "skipleft": [
+      { "read" : ".", "to_state": "scanright", "write": ".", "action": "RIGHT"},
+      { "read" : "0", "to_state": "skipleft", "write": "0", "action": "LEFT"},
+      { "read" : "1", "to_state": "skipleft", "write": "1", "action": "LEFT"}
+    ],
+    "scan0": [
+      { "read" : ".", "to_state": "check0", "write": ".", "action": "LEFT"},
+      { "read" : "0", "to_state": "scan0", "write": "0", "action": "RIGHT"},
+      { "read" : "1", "to_state": "scan0", "write": "1", "action": "RIGHT"}
+    ],
+    "scan1": [
+      { "read" : ".", "to_state": "check1", "write": ".", "action": "LEFT"},
+      { "read" : "0", "to_state": "scan1", "write": "0", "action": "RIGHT"},
+      { "read" : "1", "to_state": "scan1", "write": "1", "action": "RIGHT"}
+    ],
+    "check0": [
+      { "read" : ".", "to_state": "end", "write": "y", "action": "RIGHT"},
+      { "read" : "0", "to_state": "skipleft", "write": ".", "action": "LEFT"},
+      { "read" : "1", "to_state": "end", "write": "n", "action": "RIGHT"}
+    ],
+    "check1": [
+      { "read" : ".", "to_state": "end", "write": "y", "action": "RIGHT"},
+      { "read" : "0", "to_state": "end", "write": "n", "action": "RIGHT"},
+      { "read" : "1", "to_state": "skipleft", "write": ".", "action": "LEFT"}
+    ],
+    "end": [
+      { "read" : ".", "to_state": "HALT", "write": ".", "action": "RIGHT"}
+    ]
+  }
+}
