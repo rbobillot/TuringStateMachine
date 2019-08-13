@@ -14,7 +14,7 @@ object Machine {
       .flatMap(_.steps.filter(_.read.value == read))
       .headOption
       .orElse { // This error should be handled with description file parsing
-        println(s"\u001b[91mMachine error\u001b[0m: Cannot find next Step for current State: ${s"($ms, ${Character(read)})"}")
+        println(s"\u001b[91mState error\u001b[0m: Cannot find next Step for : ${s"($ms, ${Character(read)})"}")
         None
       }
 

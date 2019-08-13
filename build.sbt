@@ -9,6 +9,7 @@ ThisBuild / organizationName := "rbobillo"
 lazy val root = (project in file("."))
   .settings(
     name := "turing-state-machine",
+    assemblyJarName in assembly := s"turing-state-machine.jar",
     scalacOptions ++= Seq ("-feature"),
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-effect"  % "2.0.0-RC1",

@@ -4,6 +4,7 @@ import cats.data.NonEmptyChain
 import cats.data.Validated.{Invalid, Valid}
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.syntax.all._
+import com.rbobillo.turing.description.Description
 import com.rbobillo.turing.io.Output
 import com.rbobillo.turing.run.Machine
 import com.rbobillo.turing.validation.{DomainValidation, MachineValidator}
