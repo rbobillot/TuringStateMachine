@@ -1,0 +1,15 @@
+#!/bin/bash
+
+scalaversion=`grep scalaVersion build.sbt | grep -v "//" | awk '{print $5}' | cut -d '"' -f2 | cut -c 1-4`
+
+filepath="target/scala-$scalaversion/turing-state-machine.jar"
+
+sbt assembly
+
+if [[ -f $filepath ]]
+then
+	binfilepath=ft_turing
+	echo "#!/usr/bin/java -jar" > $binfilepath
+	cat $filepath >> $binfilepath
+	chmod +x $binfilepath
+fi
