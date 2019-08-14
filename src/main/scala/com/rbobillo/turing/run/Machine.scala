@@ -2,8 +2,8 @@ package com.rbobillo.turing.run
 
 import cats.effect.{ExitCode, IO}
 import cats.syntax.all._
-
 import com.rbobillo.turing.description.{Character, Description, MachineState, Step, Transition}
+import com.rbobillo.turing.io.Output
 import com.rbobillo.turing.tape.Cursor
 import com.rbobillo.turing.tape.CursorImplicits.CharZipper
 
@@ -25,26 +25,23 @@ case class Machine(pretty: Boolean = false) {
     s"($ms, ${"".padTo(mx - ms.value.length, " ").mkString}${Character(read)}) -> ${ss.head}"
   }
 
-  private def printSteps(cursor: Cursor[String], ms: MachineState, ds: Description, inputSize: Int): IO[Unit] =
-    for {
-      _ <- if (pretty) IO(println("\u001bc" + ds)) else IO.unit
-      _ <- IO(println(s"${cursor.stringify(inputSize)} ${currentTransition(cursor.current, ms, ds)}"))
-      _ <- if (pretty) IO(Thread sleep 150) else IO.unit
-    } yield ()
+  private def nextStep(cursor: Cursor[String], ms: MachineState, ds: Description, sz: Int): String =
+    s"${cursor.stringify(sz)} ${currentTransition(cursor.current, ms, ds)}"
 
   private def readAndUpdateInput(cursor: Cursor[String], inputSize: Int, ms: MachineState, ds: Description): IO[ExitCode] =
     cursor match {
       case Cursor(_, _, _) if ds.finals.states.contains(ms) => IO.pure(ExitCode.Success)
-      case Cursor(_, c, _) =>
-        findNextStep(ms, c, ds.transitions.transitions).fold(IO.pure(ExitCode.Error)) { next =>
-          printSteps(cursor, ms, ds, inputSize).flatMap { _ =>
-            readAndUpdateInput(
-              cursor.copy(current = next.write.value).move(next.action),
-              inputSize,
-              next.toState,
-              ds)
-          }
+      case Cursor(_, c, _) => for {
+        s <- IO.pure(nextStep(cursor, ms, ds, inputSize))
+        _ <- Output.printSteps(s, ds, pretty)
+        r <- findNextStep(ms, c, ds.transitions.transitions).fold(IO.pure(ExitCode.Error)) { next =>
+          readAndUpdateInput(
+            cursor.copy(current = next.write.value).move(next.action),
+            inputSize,
+            next.toState,
+            ds)
         }
+      } yield r
     }
 
   def exec(description: Description, input: String): IO[ExitCode] =
