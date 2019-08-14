@@ -7,9 +7,8 @@ object Output {
 
   def printSteps(step: String, ds: Description, pretty: Boolean): IO[Unit] =
     for {
-      _ <- if (pretty) IO(println("\u001bc" + ds)) else IO.unit
+      _ <- if (pretty) IO { Thread sleep 100 ; println("\u001bc" + ds) } else IO.unit
       _ <- IO(println(step))
-      _ <- if (pretty) IO(Thread sleep 150) else IO.unit
     } yield ()
 
   def help: IO[Unit] =

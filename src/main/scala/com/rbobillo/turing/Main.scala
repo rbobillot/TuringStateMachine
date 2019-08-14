@@ -16,7 +16,7 @@ object Main extends IOApp {
 
   private def bootTuringMachine(descriptionPath: String, input: String, pretty: Boolean): IO[ExitCode] =
     MachineValidator.validateMachine(descriptionPath, input).flatMap {
-      case Valid((_, d)) => Machine(pretty).exec(d, input.mkString("...","","..."))
+      case Valid((_, d)) => Machine(d, input, input.length + 6, pretty).exec(d.initial.state)
       case Invalid(err)  => displayDescriptionErrors(err).as(ExitCode.Error)
     }
 
