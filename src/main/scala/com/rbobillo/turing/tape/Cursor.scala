@@ -6,7 +6,7 @@ case class Cursor[A](left: Stream[A], current: A, right: Stream[A]) {
   def moveRight: Cursor[A] = copy(
     left    = left #::: Stream(current),
     current = right.headOption.getOrElse(current),
-    right   = right.tail)
+    right   = right drop 1) // safe tail
 
   def moveLeft: Cursor[A] = copy(
     left    = left.dropRight(1),

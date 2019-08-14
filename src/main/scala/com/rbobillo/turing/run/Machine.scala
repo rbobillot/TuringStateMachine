@@ -7,7 +7,7 @@ import com.rbobillo.turing.description.{Character, Description, MachineState, St
 import com.rbobillo.turing.tape.Cursor
 import com.rbobillo.turing.tape.CursorImplicits.CharZipper
 
-object Machine {
+case class Machine(pretty: Boolean = false) {
 
   private def findNextStep(ms: MachineState, read: String, ts: List[Transition]): Option[Step] =
     ts.filter(_.state == ms)
@@ -25,18 +25,25 @@ object Machine {
     s"($ms, ${"".padTo(mx - ms.value.length, " ").mkString}${Character(read)}) -> ${ss.head}"
   }
 
-  // TODO: adding tailrec safety ? -> input: 111-1111= causes StackOverFlowError
+  private def printSteps(cursor: Cursor[String], ms: MachineState, ds: Description, inputSize: Int): IO[Unit] =
+    for {
+      _ <- if (pretty) IO(println("\u001bc" + ds)) else IO.unit
+      _ <- IO(println(s"${cursor.stringify(inputSize)} ${currentTransition(cursor.current, ms, ds)}"))
+      _ <- if (pretty) IO(Thread sleep 150) else IO.unit
+    } yield ()
+
   private def readAndUpdateInput(cursor: Cursor[String], inputSize: Int, ms: MachineState, ds: Description): IO[ExitCode] =
     cursor match {
       case Cursor(_, _, _) if ds.finals.states.contains(ms) => IO.pure(ExitCode.Success)
       case Cursor(_, c, _) =>
         findNextStep(ms, c, ds.transitions.transitions).fold(IO.pure(ExitCode.Error)) { next =>
-          println(s"${cursor.stringify(inputSize)} ${currentTransition(cursor.current, ms, ds)}")
-          readAndUpdateInput(
-            cursor.copy(current = next.write.value).move(next.action),
-            inputSize,
-            next.toState,
-            ds)
+          printSteps(cursor, ms, ds, inputSize).flatMap { _ =>
+            readAndUpdateInput(
+              cursor.copy(current = next.write.value).move(next.action),
+              inputSize,
+              next.toState,
+              ds)
+          }
         }
     }
 
