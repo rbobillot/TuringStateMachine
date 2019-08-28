@@ -41,13 +41,14 @@ case class Machine(ds: Description, input: String, sz: Int, pretty: Boolean = fa
       } yield cp
     }
 
-  def exec(initial: MachineState): IO[ExitCode] =
+  def exec(initialState: MachineState): IO[ExitCode] =
     for {
       _      <- IO(println(ds))
       blank  <- IO.pure(ds.blank.character.value)
-      inp    <- IO.pure(blank*3 + input + blank*3)
-      cursor <- IO.pure(Cursor.fromString(inp))
-      r      <- compute(cursor.moveRight.moveRight.moveRight, initial)
-    } yield r
+      input  <- IO.pure(blank*3 + input + blank*3)
+      cursor <- IO.pure(Cursor fromString input)
+      init   <- IO.pure(cursor.moveRight.moveRight.moveRight) // skip the 3 first blanks
+      run    <- compute(init, initialState)
+    } yield run
 
 }
