@@ -18,7 +18,10 @@ Pure Deterministic Turing State Machine, running in Terminal, done with Scala us
  - updates (re-writes) the `tape`, according to the machine description
 
 ### Available Machines
- - `unary_add`: a TM made to add unary strings
+ - `unary_add`:  a TM made to add 2 unary strings
+ - `unary_sub`:  a TM made to subtract 2 unary strings
+ - `palindrome`: a TM made to check if a binary string is a palindrome
+ - `02n`:        a TM made to check if a unary string is a word of the language 0^2n
 
 ### How to run
  ```bash
