@@ -46,8 +46,8 @@ case class Machine(ds: Description, input: String, sz: Int, pretty: Boolean = fa
       _      <- IO(println(ds))
       blank  <- IO.pure(ds.blank.character.value)
       input  <- IO.pure(blank*3 + input + blank*3)
-      cursor <- IO.pure(Zipper fromString input)
-      init   <- IO.pure(cursor.moveRight.moveRight.moveRight) // skip the 3 first blanks
+      zipper <- IO.pure(Zipper fromString input)
+      init   <- IO.pure(zipper.moveRight.moveRight.moveRight) // skip the 3 first blanks
       run    <- compute(init, initialState)
     } yield run
 
