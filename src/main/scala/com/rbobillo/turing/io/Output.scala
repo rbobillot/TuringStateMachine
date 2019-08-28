@@ -13,7 +13,7 @@ object Output {
 
   def help: IO[Unit] =
     IO pure {
-      """|usage: ./ft_turing [-h] jsonfile input [-p]
+      """|usage: ./turing [-h] jsonfile input [-p]
          |
          |positional arguments:
          |  jsonfile            json description of the machine

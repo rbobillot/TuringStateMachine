@@ -83,8 +83,8 @@ sealed trait MachineValidator {
     val vf = validateFinals(find[List[String]](description, "finals"), vs getOrElse MachineStates(Nil))
     val vt = validateTransitions(find[TransMap](description, "transitions"), vs getOrElse MachineStates(Nil))
 
-    (vn, va, _b, vb, _s, vs, vi, _f, vf, vt).mapN { (vn, va, _, vb, _, vs, vi, _, vf, vt) =>
-      input -> Description(vn, va, vb, vs, vi, vf, vt)
+    (vn, va, _b, vb, _s, vs, vi, _f, vf, vt).mapN { (name, alphabet, _, blank, _, states, initial, _, finals, transitions) =>
+      input -> Description(name, alphabet, blank, states, initial, finals, transitions)
     }
   }
 

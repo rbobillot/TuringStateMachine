@@ -8,7 +8,7 @@ sbt assembly
 
 if [[ -f $filepath ]]
 then
-	binfilepath=ft_turing
+	binfilepath=turing
 	echo "#!/usr/bin/java -jar" > $binfilepath
 	cat $filepath >> $binfilepath
 	chmod +x $binfilepath
