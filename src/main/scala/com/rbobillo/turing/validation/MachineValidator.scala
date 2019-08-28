@@ -9,6 +9,7 @@ import com.rbobillo.turing.description._
 sealed trait MachineValidator {
 
   type Result[T] = ValidatedNec[DomainValidation, T]
+  type TransMap = Map[String, List[Map[String, String]]]
 
   private def validateName(nameO: Option[String]): Result[Name] =
     if (nameO.mkString.nonEmpty) Name(nameO.mkString).validNec
@@ -50,7 +51,7 @@ sealed trait MachineValidator {
     else
       FinalsAreNotInStates.invalidNec
 
-  private def validateTransitions(transitionsO: Option[Map[String, List[Map[String, String]]]], machineStates: MachineStates): Result[Transitions] = {
+  private def validateTransitions(transitionsO: Option[TransMap], machineStates: MachineStates): Result[Transitions] = {
     val maxStateSize = machineStates.states.map(_.value.length).max
     if (transitionsO.forall(_.keys.forall(state => machineStates.states.contains(MachineState(state)))))
       Transitions(transitionsO map (_.toList) getOrElse Nil map { case (s, ss) =>
@@ -70,8 +71,6 @@ sealed trait MachineValidator {
     desc.collectFirst { case (`k`, v: V) => v }
 
   private def validateDescription(desc: Map[String, Any]): Result[Description] = {
-    type TransMap = Map[String, List[Map[String, String]]]
-
     val vn = validateName(find[String](desc, "name"))
     val va = validateAlphabet(find[List[String]](desc, "alphabet"))
     val _b = validateBlankSize(find[String](desc, "blank"))
