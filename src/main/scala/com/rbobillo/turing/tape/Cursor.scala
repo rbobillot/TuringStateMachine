@@ -1,5 +1,7 @@
 package com.rbobillo.turing.tape
 
+import com.rbobillo.turing.io.Color.{focused, unfocused}
+
 object Cursor extends Comonad[Zipper] {
 
   def map[A,B](wa: Zipper[A])(f: A => B): Zipper[B] =

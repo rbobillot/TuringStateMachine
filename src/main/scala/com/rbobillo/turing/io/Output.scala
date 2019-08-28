@@ -5,7 +5,7 @@ import com.rbobillo.turing.description.Description
 
 object Output {
 
-  def printSteps(step: String, ds: Description, pretty: Boolean): IO[Unit] =
+  def printStep(step: String, ds: Description, pretty: Boolean): IO[Unit] =
     for {
       _ <- if (pretty) IO { Thread sleep 100 ; println("\u001bc" + ds) } else IO.unit
       _ <- IO(println(step))
