@@ -26,7 +26,7 @@ case class Machine(ds: Description, input: String, cells: Int, pretty: Boolean =
       }
 
   private def stepString(zipper: Zipper[String], ms: MachineState): String =
-    s"[${zipper stringify cells}] ${currentTransition(zipper.current, ms)}"
+    s"[${zipper stringify cells}] ${currentTransition(Cursor coUnit zipper, ms)}"
 
   private def compute(zipper: Zipper[String], ms: MachineState): IO[ExitCode] =
     zipper match {

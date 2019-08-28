@@ -28,6 +28,11 @@ Pure Deterministic Turing State Machine, running in Terminal, done with Scala us
  ```bash
  sbt "run </path/to/description.json> <input>"
  ```
+or
+ ```bash
+ ./compile
+ ./turing </path/to/description.json> <input> [-p]
+ ```
 ![example](https://i.ibb.co/VJn6sQh/Capture-d-e-cran-2019-08-13-a-19-01-45.png)
 
 ### TODO
