@@ -4,7 +4,7 @@ scalaversion=`grep scalaVersion build.sbt | grep -v "//" | awk '{print $5}' | cu
 
 filepath="target/scala-$scalaversion/turing-state-machine.jar"
 
-sbt assembly
+sbt clean assembly
 
 if [[ -f $filepath ]]
 then

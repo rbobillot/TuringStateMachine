@@ -4,8 +4,8 @@ import cats.effect.{ExitCode, IO}
 
 import com.rbobillo.turing.description.{Character, Description, MachineState, Step, Transition}
 import com.rbobillo.turing.io.Output
-import com.rbobillo.turing.tape.Cursor
-import com.rbobillo.turing.tape.CursorImplicits.CharZipper
+import com.rbobillo.turing.tape.Zipper
+import com.rbobillo.turing.tape.ZipperImplicits.Stringifier
 
 case class Machine(ds: Description, input: String, sz: Int, pretty: Boolean = false) {
 
@@ -16,7 +16,7 @@ case class Machine(ds: Description, input: String, sz: Int, pretty: Boolean = fa
     s"""($ms, ${"".padTo(mx - ms.value.length, " ").mkString}${Character(read)}) -> ${ss.headOption.getOrElse("?")}"""
   }
 
-  private def nextStep(cursor: Cursor[String], ms: MachineState): String =
+  private def nextStep(cursor: Zipper[String], ms: MachineState): String =
     s"${cursor stringify sz} ${currentTransition(cursor.current, ms)}"
 
   private def findNextStep(ms: MachineState, read: Character): Option[Step] =
@@ -29,10 +29,10 @@ case class Machine(ds: Description, input: String, sz: Int, pretty: Boolean = fa
         None
       }
 
-  private def compute(cursor: Cursor[String], ms: MachineState): IO[ExitCode] =
+  private def compute(cursor: Zipper[String], ms: MachineState): IO[ExitCode] =
     cursor match {
-      case Cursor(_, _, _) if ds.finals.states.contains(ms) => IO.pure(ExitCode.Success)
-      case Cursor(_, c, _) => for {
+      case Zipper(_, _, _) if ds.finals.states.contains(ms) => IO.pure(ExitCode.Success)
+      case Zipper(_, c, _) => for {
         ns <- IO.pure(nextStep(cursor, ms))
         _  <- Output.printSteps(ns, ds, pretty)
         cp <- findNextStep(ms, Character(c)).fold(IO.pure(ExitCode.Error)) { ns =>
@@ -46,7 +46,7 @@ case class Machine(ds: Description, input: String, sz: Int, pretty: Boolean = fa
       _      <- IO(println(ds))
       blank  <- IO.pure(ds.blank.character.value)
       input  <- IO.pure(blank*3 + input + blank*3)
-      cursor <- IO.pure(Cursor fromString input)
+      cursor <- IO.pure(Zipper fromString input)
       init   <- IO.pure(cursor.moveRight.moveRight.moveRight) // skip the 3 first blanks
       run    <- compute(init, initialState)
     } yield run

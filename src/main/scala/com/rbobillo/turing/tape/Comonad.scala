@@ -14,6 +14,6 @@ trait Comonad[W[_]] extends Functor[W] {
 
   def coJoin[A](wa: W[A]): W[W[A]]
 
-  def =>>[A,B](wa: W[A])(f: W[A] => B): W[B]
+  def coBind[A,B](wa: W[A])(f: W[A] => B): W[B]
 
 }

@@ -8,14 +8,15 @@ Pure Deterministic Turing State Machine, running in Terminal, done with Scala us
 ### Cool features around functional programming
  - `IO` Monad (Cats), to give a homogeneous structure (safe, easy to compose)
  - `Validated` Applicative Functor (Cats), to parse the Machine description (JSON file)
- - `LazyListZipper` Comonad (handmade, for fun)
-   - built around `Cursor`: handmade wrapper to deal with `Stream` or `LazyList` (simulating the Machine's `head`)
+ - `Cursor` Comonad (handmade, for fun)
+   - built around `Zipper`: handmade wrapper to deal with `Stream` or `LazyList` (simulating the Machine's `head`)
    - handles (updates, displays) the Machine's `tape`
 
 ### What does it do ?
  - parses a JSON description of the Machine (alphabet, states, transitions...)
  - parses an input, first content of an infinite `tape` that will be re-written
  - updates (re-writes) the `tape`, according to the machine description
+ - displays every update on stdout
 
 ### Available Machines
  - `unary_add`:  a TM made to add 2 unary strings
