@@ -1,6 +1,6 @@
 package com.rbobillo.turing.validation
 
-import cats.data.ValidatedNec
+import cats.data.{NonEmptyChain, ValidatedNec}
 import cats.effect.IO
 import cats.implicits._
 import com.rbobillo.turing.io.Input
@@ -66,40 +66,41 @@ sealed trait MachineValidator {
     else TransitionsIncludesInvalidTokens.invalidNec
   }
 
-  private def find[V: Manifest](description: Map[String, Any], k: String): Option[V] =
-    description.get(k).collect { case v: V => v }
+  private def find[V : Manifest](desc: Map[String, Any], k: String): Option[V] =
+    desc.collectFirst { case (`k`, v: V) => v }
 
-  private def validateDescription(description: Map[String, Any], input: String): Result[(String, Description)] = {
+  private def validateDescription(desc: Map[String, Any]): Result[Description] = {
     type TransMap = Map[String, List[Map[String, String]]]
 
-    val vn = validateName(find[String](description, "name"))
-    val va = validateAlphabet(find[List[String]](description, "alphabet"))
-    val _b = validateBlankSize(find[String](description, "blank"))
-    val vb = validateBlank(find[String](description, "blank"), va getOrElse Alphabet(Nil))
-    val _s = validateEachMachineStates(find[List[String]](description, "states"))
-    val vs = validateMachineStates(find[List[String]](description, "states"))
-    val vi = validateInitial(find[String](description, "initial"), vs getOrElse MachineStates(Nil))
-    val _f = validateFinalsSize(find[List[String]](description, "finals"))
-    val vf = validateFinals(find[List[String]](description, "finals"), vs getOrElse MachineStates(Nil))
-    val vt = validateTransitions(find[TransMap](description, "transitions"), vs getOrElse MachineStates(Nil))
+    val vn = validateName(find[String](desc, "name"))
+    val va = validateAlphabet(find[List[String]](desc, "alphabet"))
+    val _b = validateBlankSize(find[String](desc, "blank"))
+    val vb = validateBlank(find[String](desc, "blank"), va getOrElse Alphabet(Nil))
+    val _s = validateEachMachineStates(find[List[String]](desc, "states"))
+    val vs = validateMachineStates(find[List[String]](desc, "states"))
+    val vi = validateInitial(find[String](desc, "initial"), vs getOrElse MachineStates(Nil))
+    val _f = validateFinalsSize(find[List[String]](desc, "finals"))
+    val vf = validateFinals(find[List[String]](desc, "finals"), vs getOrElse MachineStates(Nil))
+    val vt = validateTransitions(find[TransMap](desc, "transitions"), vs getOrElse MachineStates(Nil))
 
     (vn, va, _b, vb, _s, vs, vi, _f, vf, vt).mapN { (name, alphabet, _, blank, _, states, initial, _, finals, transitions) =>
-      input -> Description(name, alphabet, blank, states, initial, finals, transitions)
+      Description(name, alphabet, blank, states, initial, finals, transitions)
     }
   }
+
+  private def validateInput(input: String, description: Description): Result[(String, Description)] =
+    if (input.forall(description.alphabet.characters.flatMap(_.value.headOption).contains))
+      (input -> description).validNec
+    else
+      InvalidInput.invalidNec
 
   def validateMachine(path: String, input: String): IO[Result[(String, Description)]] =
     Input.readDescription(path).attempt.map {
       case Left(_) => CannotOpenFile.invalidNec
       case Right(d) =>
-        validateDescription(Input parseJson d, input).fold(
-          err => err.invalid,
-          res =>
-            if (res._1.forall(res._2.alphabet.characters.flatMap(_.value.headOption).contains))
-              (res._1.mkString -> res._2).validNec
-            else
-              InvalidInput.invalidNec
-        )
+        validateDescription(Input parseJson d).fold(
+          error => error.invalid,
+          desc  => validateInput(input, desc))
     }
 }
 
