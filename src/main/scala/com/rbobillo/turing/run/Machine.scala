@@ -13,7 +13,7 @@ case class Machine(ds: Description, input: String, sz: Int, pretty: Boolean = fa
     val mx = ds.machineStates.states.map(_.value.length).max
     val ts = ds.transitions.transitions.filter(_.state == ms)
     val ss = ts.flatMap(_.steps.filter(_.read.value == read))
-    s"($ms, ${"".padTo(mx - ms.value.length, " ").mkString}${Character(read)}) -> ${ss.head}"
+    s"""($ms, ${"".padTo(mx - ms.value.length, " ").mkString}${Character(read)}) -> ${ss.headOption.getOrElse("?")}"""
   }
 
   private def nextStep(cursor: Cursor[String], ms: MachineState): String =

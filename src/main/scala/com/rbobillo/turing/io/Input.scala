@@ -9,7 +9,7 @@ object Input {
   def readDescription(path: String): IO[String] =
     IO(scala.io.Source.fromFile(path)).map(_.mkString)
 
-  // TODO: extract from Input (-> Utils ?), and use a parsing lib
+  // TODO: extract from Input (-> Utils ?), and use a better parsing lib (Scala 2.13 ready)
   def parseJson(json: String): Map[String, Any] =
     JsonMapper.ToObject(JsonOps.Json(json))
 
