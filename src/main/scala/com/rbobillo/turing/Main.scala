@@ -4,7 +4,7 @@ import cats.data.NonEmptyChain
 import cats.data.Validated.{Invalid, Valid}
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.syntax.all._
-
+import com.rbobillo.turing.description.Description
 import com.rbobillo.turing.io.Output
 import com.rbobillo.turing.run.Machine
 import com.rbobillo.turing.validation.{DomainValidation, MachineValidator}
@@ -14,9 +14,15 @@ object Main extends IOApp {
   private def displayDescriptionErrors(err: NonEmptyChain[DomainValidation]): IO[Unit] =
     IO(err.toList.map(_.errorMessage) foreach println)
 
+  private def runMachine(d: Description, input: String, pretty: Boolean, spacesQty: Int): IO[ExitCode] =
+    for {
+      machine <- IO.pure(Machine(d, input, input.length + spacesQty * 2, pretty))
+      code    <- machine.exec(d.initial.state, spacesQty)
+    } yield code
+
   private def bootTuringMachine(descriptionPath: String, input: String, pretty: Boolean, spacesQty: Int): IO[ExitCode] =
     MachineValidator.validateMachine(descriptionPath, input).flatMap {
-      case Valid((_, d)) => Machine(d, input, input.length+spacesQty*2, pretty).exec(d.initial.state, spacesQty)
+      case Valid((_, d)) => runMachine(d, input, pretty, spacesQty)
       case Invalid(err)  => displayDescriptionErrors(err).as(ExitCode.Error)
     }
 
