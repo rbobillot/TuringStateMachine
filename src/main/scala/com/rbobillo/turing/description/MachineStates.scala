@@ -1,7 +1,9 @@
 package com.rbobillo.turing.description
 
+import com.rbobillo.turing.io.Color
+
 case class MachineState(value: String) {
-  override def toString: String = "\u001b[33m"+value+"\u001b[0m"
+  override def toString: String = Color darkyellow value
 }
 
 case class Initial(state: MachineState) {

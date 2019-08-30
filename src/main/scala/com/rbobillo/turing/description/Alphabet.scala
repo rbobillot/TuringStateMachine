@@ -1,11 +1,13 @@
 package com.rbobillo.turing.description
 
+import com.rbobillo.turing.io.Color
+
 case class Character(value: String) {
-  override def toString: String = "\u001b[95m"+value+"\u001b[0m"
+  override def toString: String = Color magenta value
 }
 
 case class Blank(character: Character) {
-  override def toString: String = "\u001b[2m"+character.value.toCharArray.mkString+"\u001b[0m"
+  override def toString: String = Color.grey(character.value.toCharArray.mkString)
 }
 
 case class Alphabet(characters: List[Character]) {

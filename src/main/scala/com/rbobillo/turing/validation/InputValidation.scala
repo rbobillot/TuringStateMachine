@@ -1,7 +1,9 @@
 package com.rbobillo.turing.validation
 
+import com.rbobillo.turing.io.Color
+
 sealed trait InputValidation extends DomainValidation {
-  override val domain: String = "\u001b[91mInput error\u001b[0m:"
+  override val domain: String = Color.red("Input error") + ":"
   def errorMessage: String
 }
 

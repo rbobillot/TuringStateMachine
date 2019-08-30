@@ -2,18 +2,10 @@ package com.rbobillo.turing.run
 
 import cats.effect.{ExitCode, IO}
 import com.rbobillo.turing.description.{Character, Description, MachineState, Step, Transition}
-import com.rbobillo.turing.io.Output
+import com.rbobillo.turing.io.{Color, Output}
 import com.rbobillo.turing.tape.{Cursor, Zipper}
-import com.rbobillo.turing.tape.ZipperImplicits.Stringifier
 
-case class Machine(ds: Description, input: String, cells: Int, pretty: Boolean = false) {
-
-  private def currentTransition(read: String, ms: MachineState): String = {
-    val mx = ds.machineStates.states.map(_.value.length).max
-    val ts = ds.transitions.transitions.filter(_.state == ms)
-    val ss = ts.flatMap(_.steps.filter(_.read.value == read))
-    s"""($ms, ${"".padTo(mx - ms.value.length, " ").mkString}${Character(read)}) -> ${ss.headOption.getOrElse("?")}"""
-  }
+case class Machine(ds: Description, input: String, cellsQty: Int, pretty: Boolean = false) {
 
   private def findNextStep(ms: MachineState, read: Character): Option[Step] =
     ds.transitions.transitions
@@ -21,19 +13,16 @@ case class Machine(ds: Description, input: String, cells: Int, pretty: Boolean =
       .flatMap(_.steps.filter(_.read == read))
       .headOption
       .orElse { // This error should be handled with description file parsing
-        println(s"\u001b[91mState error\u001b[0m: Cannot find next Step for : ${s"($ms, $read)"}")
+        println(s"${Color red "State error"}: Cannot find next Step for : ${(ms, read)}")
         None
       }
-
-  private def stepString(zipper: Zipper[String], ms: MachineState): String =
-    s"[${zipper stringify cells}] ${currentTransition(Cursor coUnit zipper, ms)}"
 
   private def compute(zipper: Zipper[String], ms: MachineState): IO[ExitCode] =
     zipper match {
       case _ if ds.finals.states.contains(ms) => IO.pure(ExitCode.Success)
       case z => for {
-        ss <- IO.pure(stepString(zipper, ms))
-        _  <- Output.printStep(ss, ds, pretty)
+        st <- Output.formatStep(zipper, ms, cellsQty, ds)
+        _  <- Output.printStep(st, ds, pretty)
         cp <- findNextStep(ms, Character(Cursor coUnit z)).fold(IO.pure(ExitCode.Error)) { ns =>
           compute(zipper.copy(current = ns.write.value).move(ns.action), ns.toState)
         }

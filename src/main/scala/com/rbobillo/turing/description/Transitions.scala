@@ -1,5 +1,7 @@
 package com.rbobillo.turing.description
 
+import com.rbobillo.turing.io.Color
+
 case class Step(read:    Character,
                 toState: MachineState,
                 write:   Character,
@@ -8,7 +10,7 @@ case class Step(read:    Character,
   override def toString: String =
     s"($toState, ${
       "".padTo(max - toState.value.length, " ").mkString
-    }$write, \u001b[32m${action.toString}\u001b[0m)"
+    }$write, ${Color darkgreen action.toString})"
 }
 
 case class Transition(state: MachineState,

@@ -1,7 +1,9 @@
 package com.rbobillo.turing.validation
 
+import com.rbobillo.turing.io.Color
+
 sealed trait DescriptionValidation extends DomainValidation {
-  override val domain: String = "\u001b[91mDescription error\u001b[0m:"
+  override val domain: String = Color.red("Description error") + ":"
   def errorMessage: String
 }
 
