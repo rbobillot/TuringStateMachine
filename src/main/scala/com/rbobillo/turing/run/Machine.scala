@@ -12,7 +12,7 @@ case class Machine(ds: Description, input: String, cellsQty: Int, pretty: Boolea
       .filter(_.state == ms)
       .flatMap(_.steps.filter(_.read == read))
       .headOption
-      .orElse { // This error should be handled with description file parsing
+      .orElse {
         println(s"${Color red "State error"}: Cannot find next Step for : ${(ms, read)}")
         None
       }
@@ -23,8 +23,9 @@ case class Machine(ds: Description, input: String, cellsQty: Int, pretty: Boolea
       case z => for {
         st <- Output.formatStep(zipper, ms, cellsQty, ds)
         _  <- Output.printStep(st, ds, pretty)
-        cp <- findNextStep(ms, Character(Cursor coUnit z)).fold(IO.pure(ExitCode.Error)) { ns =>
-          compute(zipper.copy(current = ns.write.value).move(ns.action), ns.toState)
+        ns <- IO.pure(findNextStep(ms, Character(Cursor coUnit z)))
+        cp <- ns.fold(IO.pure(ExitCode.Error)) { step =>
+          compute(zipper.copy(current = step.write.value).move(step.action), step.toState)
         }
       } yield cp
     }
