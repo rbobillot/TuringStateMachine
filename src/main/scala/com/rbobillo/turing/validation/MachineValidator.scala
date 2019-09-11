@@ -10,6 +10,7 @@ sealed trait MachineValidator {
 
   type Result[T] = ValidatedNec[DomainValidation, T]
   type TransMap = Map[String, List[Map[String, String]]]
+  type InputTape = String
 
   private def validateName(nameO: Option[String]): Result[Name] =
     if (nameO.mkString.nonEmpty) Name(nameO.mkString).validNec
@@ -87,19 +88,19 @@ sealed trait MachineValidator {
     }
   }
 
-  private def validateInput(input: String, description: Description): Result[(String, Description)] =
-    if (input.forall(description.alphabet.characters.flatMap(_.value.headOption).contains))
-      (input -> description).validNec
+  private def validateInput(inputTape: InputTape, description: Description): Result[(InputTape, Description)] =
+    if (inputTape.forall(description.alphabet.characters.flatMap(_.value.headOption).contains))
+      (inputTape -> description).validNec
     else
       InvalidInput.invalidNec
 
-  def validateMachine(path: String, input: String): IO[Result[(String, Description)]] =
+  def validateMachine(path: String, inputTape: InputTape): IO[Result[(InputTape, Description)]] =
     Input.readDescription(path).attempt.map {
-      case Left(_) => CannotOpenFile.invalidNec
+      case Left(_)  => CannotOpenFile.invalidNec
       case Right(d) =>
         validateDescription(Input parseJson d).fold(
           error => error.invalid,
-          desc  => validateInput(input, desc))
+          desc  => validateInput(inputTape, desc))
     }
 }
 

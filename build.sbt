@@ -12,10 +12,10 @@ lazy val root = (project in file("."))
     assemblyJarName in assembly := s"turing-state-machine.jar",
     scalacOptions ++= Seq ("-feature"),
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-effect"  % "2.0.0",
-      "org.typelevel" %% "cats-core"    % "2.0.0",
-
-      "com.persist"   %% "persist-json" % "1.2.0",
-
-      scalaTest % Test)
+      cats,
+      circe,
+      Seq("com.persist" % "persist-json_2.12" % "1.2.0"),
+      Seq(scalaTest)
+    ).flatten
   )
+
