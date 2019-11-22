@@ -8,7 +8,7 @@ Pure Deterministic Turing State Machine, running in Terminal, done with Scala us
 ### Cool features around functional programming
  - `IO` Monad (Cats), to give a homogeneous structure (safe, easy to compose)
  - `Validated` Applicative Functor (Cats), to parse the Machine description (JSON file)
- - `Cursor` Comonad (handmade, for fun)
+ - `Cursor` Comonad ([handmade](src/main/scala/com/rbobillo/turing/tape), for fun)
    - built around `Zipper`: handmade wrapper to deal with `Stream` or `LazyList` (simulating the Machine's `head`)
    - handles (updates, displays) the Machine's `tape`
 
