@@ -33,7 +33,7 @@ or
  ./compile
  ./turing </path/to/description.json> <input> [-p]
  ```
-![example](https://i.ibb.co/VJn6sQh/Capture-d-e-cran-2019-08-13-a-19-01-45.png)
+![example](https://camo.githubusercontent.com/4bb5ba4cd8abea9c94f0cca5f54fa008153818fcfdcd55972490f6c28a700822/68747470733a2f2f692e6962622e636f2f564a6e367351682f436170747572652d642d652d6372616e2d323031392d30382d31332d612d31392d30312d34352e706e67)
 
 ### TODO
  - add tests !
